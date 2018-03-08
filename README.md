@@ -2,7 +2,7 @@
 
 ![usage](usage.gif)
 
-A commandline interface for Jenkins jobs.
+A commandline interface for Jenkins jobs, which queries the current status of all matching jobs in parallel.
 
 ### Installation
 
