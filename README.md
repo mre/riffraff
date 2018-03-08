@@ -1,11 +1,16 @@
 # riffraff
 
+![usage](usage.gif)
+
 A commandline interface for Jenkins jobs.
 
 ### Installation
 
 ```
+go get github.com/mre/riffraff
 ```
+
+...or download a static binary from the [releases page](https://github.com/mre/riffraff/releases).
 
 ### Getting started
 
