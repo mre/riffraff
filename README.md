@@ -43,3 +43,7 @@ You can get the output of each last job matching the pattern with
 ```
 riffraff --raw "^application-.*-unittests$"
 ```
+
+### OBTW
+
+The tool is named after the [butler from the Rocky Horror Picture Show](https://en.wikipedia.org/wiki/The_Rocky_Horror_Picture_Show:_Let%27s_Do_the_Time_Warp_Again), and not the rapper.
