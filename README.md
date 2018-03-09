@@ -4,6 +4,36 @@
 
 A commandline interface for Jenkins jobs, which queries the current status of all matching jobs in parallel.
 
+###
+
+```
+usage: riffraff [<flags>] <command> [<args> ...]
+
+Flags:
+      --help     Show context-sensitive help (also try --help-long and --help-man).
+  -v, --verbose  Verbose mode. Print full job output
+      --salt     Show failed salt states
+
+Commands:
+  help [<command>...]
+    Show help.
+
+  status [<regex>]
+    Show the status of all matching jobs
+
+  logs [<job>]
+    Show the logs of a job
+
+  queue [<regex>]
+    Show the queue of all matching jobs
+
+  nodes
+    Show the status of all Jenkins nodes
+
+  open [<regex>]
+    Open a job in the browser
+```
+
 ### Installation
 
 ```
