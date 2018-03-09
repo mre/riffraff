@@ -21,6 +21,7 @@ var (
 	salt           = statusCommand.Flag("salt", "Show failed salt states").Bool()
 
 	queueCommand = kingpin.Command("queue", "Show the queue of all matching jobs")
+	nodesCommand = kingpin.Command("nodes", "Show the status of all Jenkins nodes")
 )
 
 func getFailedSaltStates(output string) []string {
@@ -103,8 +104,63 @@ func findMatchingJobs(jenkins *gojenkins.Jenkins, regex string) ([]gojenkins.Inn
 	return matchingJobs, nil
 }
 
-func main() {
+func queue(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) {
+	queue, err := jenkins.GetQueue()
+	if err != nil {
+		log.Fatalf("%v\n", err)
+	}
+	fmt.Println(queue.Raw)
+	// for _, task := range tasks {
+	// 	fmt.Println(task.GetWhy())
+	// }
 
+}
+
+func printNodeStatus(waitGroup *sync.WaitGroup, node gojenkins.Node) error {
+	defer waitGroup.Done()
+	// Fetch Node Data
+	node.Poll()
+	online, err := node.IsOnline()
+	if err != nil {
+		return err
+	}
+	if online {
+		fmt.Printf("%v: Online\n", node.GetName())
+	} else {
+		fmt.Printf("%v: Offline\n", node.GetName())
+	}
+	return nil
+}
+
+func nodes(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) {
+	nodes, err := jenkins.GetAllNodes()
+	if err != nil {
+		log.Fatalf("%v\n", err)
+	}
+
+	var waitGroup sync.WaitGroup
+	waitGroup.Add(len(nodes))
+	defer waitGroup.Wait()
+	for _, node := range nodes {
+		go printNodeStatus(&waitGroup, *node)
+	}
+}
+
+func status(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) {
+	jobs, err := findMatchingJobs(jenkins, regex)
+	if err != nil {
+		panic(fmt.Sprintf("Cannot retrieve jobs: %v", err))
+	}
+
+	var waitGroup sync.WaitGroup
+	waitGroup.Add(len(jobs))
+	defer waitGroup.Wait()
+	for _, job := range jobs {
+		go printStatus(&waitGroup, jenkins, job, verbose, salt)
+	}
+}
+
+func main() {
 	jenkinsURL := os.Getenv("JENKINS_URL")
 	jenkinsUser := os.Getenv("JENKINS_USER")
 	jenkinsPw := os.Getenv("JENKINS_PW")
@@ -129,33 +185,9 @@ func main() {
 		status(jenkins, *statusRegexArg, *verbose, *salt)
 	case "queue":
 		queue(jenkins, *statusRegexArg, *verbose, *salt)
+	case "nodes":
+		nodes(jenkins, *statusRegexArg, *verbose, *salt)
 	default:
 		kingpin.Usage()
-	}
-}
-
-func queue(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) {
-	queue, err := jenkins.GetQueue()
-	if err != nil {
-		log.Fatalf("%v\n", err)
-	}
-	fmt.Println(queue.Raw)
-	// for _, task := range tasks {
-	// 	fmt.Println(task.GetWhy())
-	// }
-
-}
-
-func status(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) {
-	jobs, err := findMatchingJobs(jenkins, regex)
-	if err != nil {
-		panic(fmt.Sprintf("Cannot retrieve jobs: %v", err))
-	}
-
-	var waitGroup sync.WaitGroup
-	waitGroup.Add(len(jobs))
-	defer waitGroup.Wait()
-	for _, job := range jobs {
-		go printStatus(&waitGroup, jenkins, job, verbose, salt)
 	}
 }
