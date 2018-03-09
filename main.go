@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -11,6 +10,15 @@ import (
 
 	"github.com/bndr/gojenkins"
 	"github.com/fatih/color"
+	kingpin "gopkg.in/alecthomas/kingpin.v2"
+)
+
+var (
+	// TODO: Replace this with a custom formatter or so
+	statusCommand  = kingpin.Command("status", "Show the status of all matching jobs")
+	statusRegexArg = statusCommand.Arg("regex", "The regular expression to match for the job names").Default(".*").String()
+	verbose        = statusCommand.Flag("verbose", "Verbose mode. Print full job output").Short('v').Bool()
+	salt           = statusCommand.Flag("salt", "Show failed salt states").Bool()
 )
 
 func getFailedSaltStates(output string) []string {
@@ -24,7 +32,7 @@ func getFailedSaltStates(output string) []string {
 	return failedStates
 }
 
-func runJob(waitGroup *sync.WaitGroup, jenkins *gojenkins.Jenkins, job gojenkins.InnerJob, verbose, raw bool) error {
+func runJob(waitGroup *sync.WaitGroup, jenkins *gojenkins.Jenkins, job gojenkins.InnerJob, verbose, salt bool) error {
 	// Buffer full output to avoid race conditions between jobs
 	output := ""
 	defer waitGroup.Done()
@@ -58,10 +66,10 @@ func runJob(waitGroup *sync.WaitGroup, jenkins *gojenkins.Jenkins, job gojenkins
 	output += fmt.Sprintf("%v %v (%v)\n", marker, job.Name, job.Url)
 
 	if result != "SUCCESS" && lastBuild != nil {
-		if verbose || raw {
+		if verbose || salt {
 			output += fmt.Sprintf("Jenkins result code: %v\n", result)
 			consoleOutput := lastBuild.GetConsoleOutput()
-			if raw {
+			if salt {
 				output += fmt.Sprintf(consoleOutput)
 			} else {
 				for _, stateOutput := range getFailedSaltStates(consoleOutput) {
@@ -75,6 +83,7 @@ func runJob(waitGroup *sync.WaitGroup, jenkins *gojenkins.Jenkins, job gojenkins
 	return nil
 }
 
+// Find all jobs matching the given regex
 func findMatchingJobs(jenkins *gojenkins.Jenkins, regex string) ([]gojenkins.InnerJob, error) {
 	jobs, err := jenkins.GetAllJobNames()
 	if err != nil {
@@ -94,17 +103,6 @@ func findMatchingJobs(jenkins *gojenkins.Jenkins, regex string) ([]gojenkins.Inn
 
 func main() {
 
-	verbose := flag.Bool("v", false, "verbose output")
-	raw := flag.Bool("raw", false, "raw output")
-	flag.Parse()
-
-	var regex string
-	if len(flag.Args()) > 0 {
-		regex = flag.Args()[0]
-	} else {
-		regex = "*"
-	}
-
 	jenkinsURL := os.Getenv("JENKINS_URL")
 	jenkinsUser := os.Getenv("JENKINS_USER")
 	jenkinsPw := os.Getenv("JENKINS_PW")
@@ -123,6 +121,16 @@ func main() {
 		panic(fmt.Sprintf("Cannot authenticate: %v", err))
 	}
 
+	// TODO: Replace with a plugin-based system
+	switch kingpin.Parse() {
+	case "status":
+		status(jenkins, *statusRegexArg, *verbose, *salt)
+	default:
+		kingpin.Usage()
+	}
+}
+
+func status(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) {
 	jobs, err := findMatchingJobs(jenkins, regex)
 	if err != nil {
 		panic(fmt.Sprintf("Cannot retrieve jobs: %v", err))
@@ -132,6 +140,6 @@ func main() {
 	waitGroup.Add(len(jobs))
 	defer waitGroup.Wait()
 	for _, job := range jobs {
-		go runJob(&waitGroup, jenkins, job, *verbose, *raw)
+		go runJob(&waitGroup, jenkins, job, verbose, salt)
 	}
 }

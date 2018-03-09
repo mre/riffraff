@@ -3,6 +3,18 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/alecthomas/template"
+  packages = [".","parse"]
+  revision = "a0175ee3bccc567396460bf5acd36800cb10c49c"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/alecthomas/units"
+  packages = ["."]
+  revision = "2efee857e7cfd4f3d0138cc3cbb1b4966962b93a"
+
+[[projects]]
+  branch = "master"
   name = "github.com/bndr/gojenkins"
   packages = ["."]
   revision = "21e24a455945cd92fd39da7a3576f2e6e5a2ddae"
@@ -38,9 +50,15 @@
   packages = ["unix"]
   revision = "349b81fb5c64ec1734eb6ee148df25459ea48517"
 
+[[projects]]
+  name = "gopkg.in/alecthomas/kingpin.v2"
+  packages = ["."]
+  revision = "947dcec5ba9c011838740e680966fd7087a71d0d"
+  version = "v2.2.6"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3c78eb6d1a36e2ef145261200423cf422f4c3046c0eaf7b55364c0f64271d44a"
+  inputs-digest = "0b3558088062ba239cb753438da02e5721e3bef1afd13bfd1f0c05560e375cfe"
   solver-name = "gps-cdcl"
   solver-version = 1
