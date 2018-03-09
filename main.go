@@ -19,6 +19,8 @@ var (
 	statusRegexArg = statusCommand.Arg("regex", "The regular expression to match for the job names").Default(".*").String()
 	verbose        = statusCommand.Flag("verbose", "Verbose mode. Print full job output").Short('v').Bool()
 	salt           = statusCommand.Flag("salt", "Show failed salt states").Bool()
+
+	queueCommand = kingpin.Command("queue", "Show the queue of all matching jobs")
 )
 
 func getFailedSaltStates(output string) []string {
@@ -32,7 +34,7 @@ func getFailedSaltStates(output string) []string {
 	return failedStates
 }
 
-func runJob(waitGroup *sync.WaitGroup, jenkins *gojenkins.Jenkins, job gojenkins.InnerJob, verbose, salt bool) error {
+func printStatus(waitGroup *sync.WaitGroup, jenkins *gojenkins.Jenkins, job gojenkins.InnerJob, verbose, salt bool) error {
 	// Buffer full output to avoid race conditions between jobs
 	output := ""
 	defer waitGroup.Done()
@@ -125,9 +127,23 @@ func main() {
 	switch kingpin.Parse() {
 	case "status":
 		status(jenkins, *statusRegexArg, *verbose, *salt)
+	case "queue":
+		queue(jenkins, *statusRegexArg, *verbose, *salt)
 	default:
 		kingpin.Usage()
 	}
+}
+
+func queue(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) {
+	queue, err := jenkins.GetQueue()
+	if err != nil {
+		log.Fatalf("%v\n", err)
+	}
+	fmt.Println(queue.Raw)
+	// for _, task := range tasks {
+	// 	fmt.Println(task.GetWhy())
+	// }
+
 }
 
 func status(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) {
@@ -140,6 +156,6 @@ func status(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) {
 	waitGroup.Add(len(jobs))
 	defer waitGroup.Wait()
 	for _, job := range jobs {
-		go runJob(&waitGroup, jenkins, job, verbose, salt)
+		go printStatus(&waitGroup, jenkins, job, verbose, salt)
 	}
 }
