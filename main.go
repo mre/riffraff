@@ -151,7 +151,6 @@ func queue(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) error {
 	// 	fmt.Println(task.GetWhy())
 	// }
 	return nil
-
 }
 
 func printNodeStatus(waitGroup *sync.WaitGroup, node gojenkins.Node) error {
