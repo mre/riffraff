@@ -25,6 +25,7 @@ func getFailedSaltStates(output string) []string {
 }
 
 func runJob(waitGroup *sync.WaitGroup, jenkins *gojenkins.Jenkins, job gojenkins.InnerJob, verbose, raw bool) error {
+	// Buffer full output to avoid race conditions between jobs
 	output := ""
 	defer waitGroup.Done()
 	yellow := color.New(color.FgYellow).SprintFunc()
@@ -59,10 +60,11 @@ func runJob(waitGroup *sync.WaitGroup, jenkins *gojenkins.Jenkins, job gojenkins
 	if result != "SUCCESS" && lastBuild != nil {
 		if verbose || raw {
 			output += fmt.Sprintf("Jenkins result code: %v\n", result)
+			consoleOutput := lastBuild.GetConsoleOutput()
 			if raw {
-				output += fmt.Sprintf(lastBuild.GetConsoleOutput())
+				output += fmt.Sprintf(consoleOutput)
 			} else {
-				for _, stateOutput := range getFailedSaltStates(lastBuild.GetConsoleOutput()) {
+				for _, stateOutput := range getFailedSaltStates(consoleOutput) {
 					output += stateOutput
 				}
 			}
