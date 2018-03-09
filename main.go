@@ -19,7 +19,7 @@ var (
 	statusRegexArg = statusCommand.Arg("regex", "The regular expression to match for the job names").Default(".*").String()
 
 	logsCommand = kingpin.Command("logs", "Show the logs of a job")
-	logsJobArg  = logsCommand.Arg("job", "The name of the job to get logs for").String()
+	logsJobArg  = logsCommand.Arg("job", "The name of the job to get logs for").Required().String()
 
 	queueCommand  = kingpin.Command("queue", "Show the queue of all matching jobs")
 	queueRegexArg = queueCommand.Arg("regex", "The regular expression to match for the job names").Default(".*").String()

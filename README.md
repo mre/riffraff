@@ -21,7 +21,7 @@ Commands:
   status [<regex>]
     Show the status of all matching jobs
 
-  logs [<job>]
+  logs <job>
     Show the logs of a job
 
   queue [<regex>]
