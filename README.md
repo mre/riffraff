@@ -28,20 +28,20 @@ You might want to put those into your `~/.bashrc`, `~/.zshrc` or equivalent.
 ### Usage
 
 ```
-riffraff jenkins-job-name
+riffraff status jenkins-job-name
 ```
 
 This will print the current status of all Jenkins jobs matching the given pattern (`jenkins-job-name` in this case).
 You can use any regular expression for that, e.g.:
 
 ```
-riffraff "^application-.*-unittests$"
+riffraff status "^application-.*-unittests$"
 ```
 
-You can get the output of each last job matching the pattern with 
+You can get the full output of each last job matching the pattern with 
 
 ```
-riffraff --raw "^application-.*-unittests$"
+riffraff status -v "^application-.*-unittests$"
 ```
 
 ### OBTW
