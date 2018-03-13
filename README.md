@@ -21,6 +21,9 @@ Commands:
   status [<regex>]
     Show the status of all matching jobs
 
+  build [<regex>]
+    Trigger build for all matching jobs
+
   logs <job>
     Show the logs of a job
 
