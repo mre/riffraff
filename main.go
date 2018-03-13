@@ -18,6 +18,9 @@ var (
 	statusCommand  = kingpin.Command("status", "Show the status of all matching jobs")
 	statusRegexArg = statusCommand.Arg("regex", "The regular expression to match for the job names").Default(".*").String()
 
+	buildCommand  = kingpin.Command("build", "Trigger build for all matching jobs")
+	buildRegexArg = buildCommand.Arg("regex", "The regular expression to match for the job names").Default(".*").String()
+
 	logsCommand = kingpin.Command("logs", "Show the logs of a job")
 	logsJobArg  = logsCommand.Arg("job", "The name of the job to get logs for").Required().String()
 
@@ -141,7 +144,7 @@ func findMatchingJobs(jenkins *gojenkins.Jenkins, regex string) ([]gojenkins.Inn
 	return matchingJobs, nil
 }
 
-func queue(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) error {
+func queueExec(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) error {
 	queue, err := jenkins.GetQueue()
 	if err != nil {
 		return err
@@ -169,7 +172,7 @@ func printNodeStatus(waitGroup *sync.WaitGroup, node gojenkins.Node) error {
 	return nil
 }
 
-func nodes(jenkins *gojenkins.Jenkins) error {
+func nodesExec(jenkins *gojenkins.Jenkins) error {
 	nodes, err := jenkins.GetAllNodes()
 	if err != nil {
 		return err
@@ -214,6 +217,30 @@ func statusExec(jenkins *gojenkins.Jenkins, regex string) error {
 	return nil
 }
 
+func buildExec(jenkins *gojenkins.Jenkins, regex string) error {
+	jobs, err := findMatchingJobs(jenkins, regex)
+	if err != nil {
+		return err
+	}
+
+	// TODO
+	// var waitGroup sync.WaitGroup
+	// waitGroup.Add(len(jobs))
+	// defer waitGroup.Wait()
+	for _, job := range jobs {
+		id, err := jenkins.BuildJob(job.Name)
+		if err != nil {
+			return err
+		}
+		build, err := jenkins.GetBuild(job.Name, id)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("Triggered build for %v [%v] %v\n", job.Name, id, build.GetUrl())
+	}
+	return nil
+}
+
 func main() {
 	jenkinsURL := os.Getenv("JENKINS_URL")
 	jenkinsUser := os.Getenv("JENKINS_USER")
@@ -237,12 +264,14 @@ func main() {
 	switch kingpin.Parse() {
 	case "status":
 		err = statusExec(jenkins, *statusRegexArg)
+	case "build":
+		err = buildExec(jenkins, *buildRegexArg)
 	case "logs":
 		err = logsExec(jenkins, *logsJobArg, *salt)
 	case "queue":
-		err = queue(jenkins, *queueRegexArg, *verbose, *salt)
+		err = queueExec(jenkins, *queueRegexArg, *verbose, *salt)
 	case "nodes":
-		err = nodes(jenkins)
+		err = nodesExec(jenkins)
 	case "open":
 		err = openExec(jenkins, *openRegexArg)
 	default:
