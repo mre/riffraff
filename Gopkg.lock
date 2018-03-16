@@ -39,6 +39,12 @@
   version = "v0.0.3"
 
 [[projects]]
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/skratchdot/open-golang"
   packages = ["open"]
@@ -65,6 +71,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "353b72f62b81adb0fd2bb08bf759aaace4bffdb177552ffb1079d59a10cc96d7"
+  inputs-digest = "00caadfc9a6160a191d8dce3d4662ab21dc4b23444e369f2a81a91929ff1c1a3"
   solver-name = "gps-cdcl"
   solver-version = 1

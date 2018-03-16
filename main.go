@@ -10,6 +10,7 @@ import (
 
 	"github.com/bndr/gojenkins"
 	"github.com/fatih/color"
+	"github.com/pmezard/go-difflib/difflib"
 	"github.com/skratchdot/open-golang/open"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
@@ -23,6 +24,11 @@ var (
 
 	logsCommand = kingpin.Command("logs", "Show the logs of a job")
 	logsJobArg  = logsCommand.Arg("job", "The name of the job to get logs for").Required().String()
+
+	diffCommand   = kingpin.Command("diff", "Print a diff between two builds of a job")
+	diffJobArg    = diffCommand.Arg("job", "The name of the job to get the diff for").Required().String()
+	diffBuild1Arg = diffCommand.Arg("build1", "First build").Required().Int64()
+	diffBuild2Arg = diffCommand.Arg("build2", "Second build").Required().Int64()
 
 	queueCommand  = kingpin.Command("queue", "Show the queue of all matching jobs")
 	queueRegexArg = queueCommand.Arg("regex", "The regular expression to match for the job names").Default(".*").String()
@@ -123,6 +129,35 @@ func logsExec(jenkins *gojenkins.Jenkins, jobName string, salt bool) error {
 		fmt.Printf(consoleOutput)
 	}
 	fmt.Printf("%v/consoleText\n", lastBuild.GetUrl())
+	return nil
+}
+
+func diffExec(jenkins *gojenkins.Jenkins, jobName string, build1, build2 int64) error {
+	build, err := jenkins.GetJob(jobName)
+	if err != nil {
+		return err
+	}
+
+	build1Logs, err := build.GetBuild(build1)
+	if err != nil {
+		return err
+	}
+
+	build2Logs, err := build.GetBuild(build2)
+	if err != nil {
+		return err
+	}
+
+	diff := difflib.UnifiedDiff{
+		A:        difflib.SplitLines(build1Logs.GetConsoleOutput()),
+		B:        difflib.SplitLines(build2Logs.GetConsoleOutput()),
+		FromFile: "Original",
+		ToFile:   "Current",
+		Context:  3,
+	}
+	text, _ := difflib.GetUnifiedDiffString(diff)
+	fmt.Printf(text)
+
 	return nil
 }
 
@@ -264,6 +299,8 @@ func main() {
 	switch kingpin.Parse() {
 	case "status":
 		err = statusExec(jenkins, *statusRegexArg)
+	case "diff":
+		err = diffExec(jenkins, *diffJobArg, *diffBuild1Arg, *diffBuild2Arg)
 	case "build":
 		err = buildExec(jenkins, *buildRegexArg)
 	case "logs":

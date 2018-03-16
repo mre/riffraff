@@ -37,3 +37,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/skratchdot/open-golang"
+
+[[constraint]]
+  name = "github.com/pmezard/go-difflib"
+  version = "1.0.0"

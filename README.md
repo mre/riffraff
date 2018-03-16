@@ -27,6 +27,9 @@ Commands:
   logs <job>
     Show the logs of a job
 
+  diff <job> <build1> <build2>
+    Print a diff between two builds of a job
+
   queue [<regex>]
     Show the queue of all matching jobs
 
