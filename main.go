@@ -4,15 +4,13 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"regexp"
 	"strings"
-	"sync"
 
 	"github.com/bndr/gojenkins"
 	"github.com/fatih/color"
-	"github.com/pmezard/go-difflib/difflib"
-	"github.com/skratchdot/open-golang/open"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
+
+	"github.com/mre/riffraff/commands"
 )
 
 var (
@@ -53,40 +51,6 @@ func getFailedSaltStates(output string) []string {
 		}
 	}
 	return failedStates
-}
-
-func printStatus(waitGroup *sync.WaitGroup, jenkins *gojenkins.Jenkins, job gojenkins.InnerJob) error {
-	defer waitGroup.Done()
-	// Buffer full output to avoid race conditions between jobs
-	yellow := color.New(color.FgYellow).SprintFunc()
-	red := color.New(color.FgRed).SprintFunc()
-	green := color.New(color.FgGreen).SprintFunc()
-
-	build, err := jenkins.GetJob(job.Name)
-	if err != nil {
-		return err
-	}
-
-	lastBuild, err := build.GetLastBuild()
-	var result string
-	if err != nil {
-		result = fmt.Sprintf("UNKNOWN (%v)", err)
-	} else {
-		result = lastBuild.GetResult()
-	}
-
-	var marker string
-	switch result {
-	case "SUCCESS":
-		marker = green("✓")
-	case "FAILURE":
-		marker = red("✗")
-	default:
-		marker = yellow("?")
-	}
-
-	fmt.Printf("%v %v (%v)\n", marker, job.Name, job.Url)
-	return nil
 }
 
 func logsExec(jenkins *gojenkins.Jenkins, jobName string, salt bool) error {
@@ -132,150 +96,6 @@ func logsExec(jenkins *gojenkins.Jenkins, jobName string, salt bool) error {
 	return nil
 }
 
-func diffExec(jenkins *gojenkins.Jenkins, jobName string, build1, build2 int64) error {
-	build, err := jenkins.GetJob(jobName)
-	if err != nil {
-		return err
-	}
-
-	build1Logs, err := build.GetBuild(build1)
-	if err != nil {
-		return err
-	}
-
-	build2Logs, err := build.GetBuild(build2)
-	if err != nil {
-		return err
-	}
-
-	diff := difflib.UnifiedDiff{
-		A:        difflib.SplitLines(build1Logs.GetConsoleOutput()),
-		B:        difflib.SplitLines(build2Logs.GetConsoleOutput()),
-		FromFile: "Original",
-		ToFile:   "Current",
-		Context:  3,
-	}
-	text, _ := difflib.GetUnifiedDiffString(diff)
-	fmt.Printf(text)
-
-	return nil
-}
-
-// Find all jobs matching the given regex
-func findMatchingJobs(jenkins *gojenkins.Jenkins, regex string) ([]gojenkins.InnerJob, error) {
-	jobs, err := jenkins.GetAllJobNames()
-	if err != nil {
-		return nil, err
-	}
-
-	var matchingJobs []gojenkins.InnerJob
-	for _, job := range jobs {
-		match, _ := regexp.MatchString(regex, job.Name)
-		if match {
-			matchingJobs = append(matchingJobs, job)
-		}
-	}
-
-	return matchingJobs, nil
-}
-
-func queueExec(jenkins *gojenkins.Jenkins, regex string, verbose, salt bool) error {
-	queue, err := jenkins.GetQueue()
-	if err != nil {
-		return err
-	}
-	fmt.Println(queue.Raw)
-	// for _, task := range tasks {
-	// 	fmt.Println(task.GetWhy())
-	// }
-	return nil
-}
-
-func printNodeStatus(waitGroup *sync.WaitGroup, node gojenkins.Node) error {
-	defer waitGroup.Done()
-	// Fetch Node Data
-	node.Poll()
-	online, err := node.IsOnline()
-	if err != nil {
-		return err
-	}
-	if online {
-		fmt.Printf("%v: Online\n", node.GetName())
-	} else {
-		fmt.Printf("%v: Offline\n", node.GetName())
-	}
-	return nil
-}
-
-func nodesExec(jenkins *gojenkins.Jenkins) error {
-	nodes, err := jenkins.GetAllNodes()
-	if err != nil {
-		return err
-	}
-
-	var waitGroup sync.WaitGroup
-	waitGroup.Add(len(nodes))
-	defer waitGroup.Wait()
-	for _, node := range nodes {
-		go printNodeStatus(&waitGroup, *node)
-	}
-	return nil
-}
-
-func openExec(jenkins *gojenkins.Jenkins, regex string) error {
-	jobs, err := findMatchingJobs(jenkins, regex)
-	if err != nil {
-		return err
-	}
-	if len(jobs) > 3 {
-		log.Fatalf("More than three jobs match your criteria. This is probably not what you expected. Please narrow down your search\n")
-	}
-
-	for _, job := range jobs {
-		open.Run(job.Url)
-	}
-	return nil
-}
-
-func statusExec(jenkins *gojenkins.Jenkins, regex string) error {
-	jobs, err := findMatchingJobs(jenkins, regex)
-	if err != nil {
-		return err
-	}
-
-	var waitGroup sync.WaitGroup
-	waitGroup.Add(len(jobs))
-	defer waitGroup.Wait()
-	for _, job := range jobs {
-		go printStatus(&waitGroup, jenkins, job)
-	}
-	return nil
-}
-
-func buildExec(jenkins *gojenkins.Jenkins, regex string) error {
-	jobs, err := findMatchingJobs(jenkins, regex)
-	if err != nil {
-		return err
-	}
-
-	// TODO
-	// var waitGroup sync.WaitGroup
-	// waitGroup.Add(len(jobs))
-	// defer waitGroup.Wait()
-	for _, job := range jobs {
-		id, err := jenkins.BuildJob(job.Name)
-		if err != nil {
-			return err
-		}
-		build, err := jenkins.GetBuild(job.Name, id)
-		if err != nil {
-			return err
-		}
-		fmt.Printf("Triggered build for %v [%v] %v\n", job.Name, id, build.GetUrl())
-	}
-	return nil
-}
-
 func main() {
 	jenkinsURL := os.Getenv("JENKINS_URL")
 	jenkinsUser := os.Getenv("JENKINS_USER")
@@ -298,19 +118,19 @@ func main() {
 	// TODO: Replace with a plugin-based system
 	switch kingpin.Parse() {
 	case "status":
-		err = statusExec(jenkins, *statusRegexArg)
+		err = commands.StatusExec(jenkins, *statusRegexArg)
 	case "diff":
-		err = diffExec(jenkins, *diffJobArg, *diffBuild1Arg, *diffBuild2Arg)
+		err = commands.DiffExec(jenkins, *diffJobArg, *diffBuild1Arg, *diffBuild2Arg)
 	case "build":
-		err = buildExec(jenkins, *buildRegexArg)
+		err = commands.BuildExec(jenkins, *buildRegexArg)
 	case "logs":
 		err = logsExec(jenkins, *logsJobArg, *salt)
 	case "queue":
-		err = queueExec(jenkins, *queueRegexArg, *verbose, *salt)
+		err = commands.QueueExec(jenkins, *queueRegexArg, *verbose, *salt)
 	case "nodes":
-		err = nodesExec(jenkins)
+		err = commands.NodesExec(jenkins)
 	case "open":
-		err = openExec(jenkins, *openRegexArg)
+		err = commands.OpenExec(jenkins, *openRegexArg)
 	default:
 		kingpin.Usage()
 	}
