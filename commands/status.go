@@ -9,8 +9,17 @@ import (
 	"github.com/mre/riffraff/job"
 )
 
-func StatusExec(jenkins *gojenkins.Jenkins, regex string) error {
-	jobs, err := job.FindMatchingJobs(jenkins, regex)
+type Status struct {
+	jenkins *gojenkins.Jenkins
+	regex   string
+}
+
+func NewStatus(jenkins *gojenkins.Jenkins, regex string) *Status {
+	return &Status{jenkins, regex}
+}
+
+func (s Status) Exec() error {
+	jobs, err := job.FindMatchingJobs(s.jenkins, s.regex)
 	if err != nil {
 		return err
 	}
@@ -19,19 +28,19 @@ func StatusExec(jenkins *gojenkins.Jenkins, regex string) error {
 	waitGroup.Add(len(jobs))
 	defer waitGroup.Wait()
 	for _, job := range jobs {
-		go printStatus(&waitGroup, jenkins, job)
+		go s.print(&waitGroup, job)
 	}
 	return nil
 }
 
-func printStatus(waitGroup *sync.WaitGroup, jenkins *gojenkins.Jenkins, job gojenkins.InnerJob) error {
+func (s Status) print(waitGroup *sync.WaitGroup, job gojenkins.InnerJob) error {
 	defer waitGroup.Done()
 	// Buffer full output to avoid race conditions between jobs
 	yellow := color.New(color.FgYellow).SprintFunc()
 	red := color.New(color.FgRed).SprintFunc()
 	green := color.New(color.FgGreen).SprintFunc()
 
-	build, err := jenkins.GetJob(job.Name)
+	build, err := s.jenkins.GetJob(job.Name)
 	if err != nil {
 		return err
 	}

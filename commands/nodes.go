@@ -7,8 +7,18 @@ import (
 	"github.com/bndr/gojenkins"
 )
 
-func NodesExec(jenkins *gojenkins.Jenkins) error {
-	nodes, err := jenkins.GetAllNodes()
+type Nodes struct {
+	jenkins *gojenkins.Jenkins
+}
+
+func NewNodes(jenkins *gojenkins.Jenkins) *Nodes {
+	return &Nodes{
+		jenkins,
+	}
+}
+
+func (n Nodes) Exec() error {
+	nodes, err := n.jenkins.GetAllNodes()
 	if err != nil {
 		return err
 	}

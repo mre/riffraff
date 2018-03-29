@@ -9,8 +9,17 @@ import (
 	"github.com/skratchdot/open-golang/open"
 )
 
-func OpenExec(jenkins *gojenkins.Jenkins, regex string) error {
-	jobs, err := job.FindMatchingJobs(jenkins, regex)
+type Open struct {
+	jenkins *gojenkins.Jenkins
+	regex   string
+}
+
+func NewOpen(jenkins *gojenkins.Jenkins, regex string) *Open {
+	return &Open{}
+}
+
+func (o Open) Exec() error {
+	jobs, err := job.FindMatchingJobs(o.jenkins, o.regex)
 	if err != nil {
 		return err
 	}

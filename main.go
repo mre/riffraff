@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/bndr/gojenkins"
-	"github.com/fatih/color"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/mre/riffraff/commands"
@@ -42,60 +40,6 @@ var (
 	salt = kingpin.Flag("salt", "Show failed salt states").Bool()
 )
 
-func getFailedSaltStates(output string) []string {
-	saltStates := strings.Split(output, "----------")
-	var failedStates []string
-	for _, state := range saltStates {
-		if strings.Contains(state, "Result: False") {
-			failedStates = append(failedStates, state)
-		}
-	}
-	return failedStates
-}
-
-func logsExec(jenkins *gojenkins.Jenkins, jobName string, salt bool) error {
-	yellow := color.New(color.FgYellow).SprintFunc()
-	red := color.New(color.FgRed).SprintFunc()
-	green := color.New(color.FgGreen).SprintFunc()
-
-	build, err := jenkins.GetJob(jobName)
-	if err != nil {
-		return err
-	}
-
-	lastBuild, err := build.GetLastBuild()
-	var result string
-	if err != nil {
-		result = fmt.Sprintf("UNKNOWN (%v)", err)
-	} else {
-		result = lastBuild.GetResult()
-	}
-
-	var marker string
-	switch result {
-	case "SUCCESS":
-		marker = green("✓")
-	case "FAILURE":
-		marker = red("✗")
-	default:
-		marker = yellow("?")
-	}
-
-	fmt.Printf("%v %v (%v)\n", marker, jobName, lastBuild.GetUrl())
-
-	fmt.Printf("Jenkins result code: %v\n", result)
-	consoleOutput := lastBuild.GetConsoleOutput()
-	if salt {
-		for _, stateOutput := range getFailedSaltStates(consoleOutput) {
-			fmt.Println(stateOutput)
-		}
-	} else {
-		fmt.Printf(consoleOutput)
-	}
-	fmt.Printf("%v/consoleText\n", lastBuild.GetUrl())
-	return nil
-}
-
 func main() {
 	jenkinsURL := os.Getenv("JENKINS_URL")
 	jenkinsUser := os.Getenv("JENKINS_USER")
@@ -118,19 +62,19 @@ func main() {
 	// TODO: Replace with a plugin-based system
 	switch kingpin.Parse() {
 	case "status":
-		err = commands.StatusExec(jenkins, *statusRegexArg)
+		err = commands.NewStatus(jenkins, *statusRegexArg).Exec()
 	case "diff":
-		err = commands.DiffExec(jenkins, *diffJobArg, *diffBuild1Arg, *diffBuild2Arg)
+		err = commands.NewDiff(jenkins, *diffJobArg, *diffBuild1Arg, *diffBuild2Arg).Exec()
 	case "build":
-		err = commands.BuildExec(jenkins, *buildRegexArg)
+		err = commands.NewBuild(jenkins, *buildRegexArg).Exec()
 	case "logs":
-		err = logsExec(jenkins, *logsJobArg, *salt)
+		err = commands.NewLogs(jenkins, *logsJobArg, *salt).Exec()
 	case "queue":
-		err = commands.QueueExec(jenkins, *queueRegexArg, *verbose, *salt)
+		err = commands.NewQueue(jenkins, *queueRegexArg, *verbose, *salt).Exec()
 	case "nodes":
-		err = commands.NodesExec(jenkins)
+		err = commands.NewNodes(jenkins).Exec()
 	case "open":
-		err = commands.OpenExec(jenkins, *openRegexArg)
+		err = commands.NewOpen(jenkins, *openRegexArg).Exec()
 	default:
 		kingpin.Usage()
 	}
