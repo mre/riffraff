@@ -28,7 +28,9 @@ func (o Open) Exec() error {
 	}
 
 	for _, job := range jobs {
-		open.Run(job.Url)
+		if err = open.Run(job.Url); err != nil {
+			return err
+		}
 	}
 	return nil
 }

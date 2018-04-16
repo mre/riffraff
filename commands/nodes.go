@@ -35,7 +35,11 @@ func (n Nodes) Exec() error {
 func printNodeStatus(waitGroup *sync.WaitGroup, node gojenkins.Node) error {
 	defer waitGroup.Done()
 	// Fetch Node Data
-	node.Poll()
+	_, err := node.Poll()
+	if err != nil {
+		return err
+	}
+
 	online, err := node.IsOnline()
 	if err != nil {
 		return err

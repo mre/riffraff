@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -53,13 +52,17 @@ func main() {
 	}
 
 	jenkins := gojenkins.CreateJenkins(nil, jenkinsURL, jenkinsUser, jenkinsPw)
-	_, err := jenkins.Init()
+	if jenkins == nil {
+		log.Fatal("Cannot instantiate Jenkins connection: null pointer return")
+	}
+	jenkins, err := jenkins.Init()
 
 	if err != nil {
-		panic(fmt.Sprintf("Cannot authenticate: %v", err))
+		log.Fatalf("Cannot authenticate: %v", err)
 	}
 
 	// TODO: Replace with a plugin-based system
+	// e.g. https://github.com/mitchellh/cli
 	switch kingpin.Parse() {
 	case "status":
 		err = commands.NewStatus(jenkins, *statusRegexArg).Exec()
