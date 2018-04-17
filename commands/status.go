@@ -50,11 +50,17 @@ func (s Status) print(waitGroup *sync.WaitGroup, job gojenkins.InnerJob) error {
 	if err != nil {
 		result = fmt.Sprintf("UNKNOWN (%v)", err)
 	} else {
-		result = lastBuild.GetResult()
+		if lastBuild.IsRunning() {
+			result = "RUNNING"
+		} else {
+			result = lastBuild.GetResult()
+		}
 	}
 
 	var marker string
 	switch result {
+	case "RUNNING":
+		marker = green("↻")
 	case "SUCCESS":
 		marker = green("✓")
 	case "FAILURE":
