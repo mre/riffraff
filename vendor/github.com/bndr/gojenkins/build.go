@@ -20,7 +20,6 @@ import (
 	"net/url"
 	"regexp"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -73,46 +72,33 @@ type generalObj struct {
 	UrlName                 string
 }
 
-type RFC1123Timestamp time.Time
-
-func (ts *RFC1123Timestamp) UnmarshalJSON(b []byte) error {
-	s := strings.Trim(string(b), "\"")
-	t, err := time.Parse(time.RFC1123, s)
-	if err != nil {
-		return err
-	}
-	*ts = RFC1123Timestamp(t)
-	return nil
-}
-
 type TestResult struct {
-	Duration  float64 `json:"duration"`
-	Empty     bool    `json:"empty"`
-	FailCount int64   `json:"failCount"`
-	PassCount int64   `json:"passCount"`
-	SkipCount int64   `json:"skipCount"`
+	Duration  int64 `json:"duration"`
+	Empty     bool  `json:"empty"`
+	FailCount int64 `json:"failCount"`
+	PassCount int64 `json:"passCount"`
+	SkipCount int64 `json:"skipCount"`
 	Suites    []struct {
 		Cases []struct {
-			Age             int64   `json:"age"`
-			ClassName       string  `json:"className"`
-			Duration        float64 `json:"duration"`
-			ErrorDetails    string  `json:"errorDetails"`
-			ErrorStackTrace string  `json:"errorStackTrace"`
-			FailedSince     int64   `json:"failedSince"`
-			Name            string  `json:"name"`
-			Skipped         string  `json:"skippedMessage"`
-			Status          string  `json:"status"`
-			Stderr          string  `json:"stderr"`
-			Stdout          string  `json:"stdout"`
+			Age             int64       `json:"age"`
+			ClassName       string      `json:"className"`
+			Duration        int64       `json:"duration"`
+			ErrorDetails    interface{} `json:"errorDetails"`
+			ErrorStackTrace interface{} `json:"errorStackTrace"`
+			FailedSince     int64       `json:"failedSince"`
+			Name            string      `json:"name"`
+			Skipped         bool        `json:"skipped"`
+			SkippedMessage  interface{} `json:"skippedMessage"`
+			Status          string      `json:"status"`
+			Stderr          interface{} `json:"stderr"`
+			Stdout          interface{} `json:"stdout"`
 		} `json:"cases"`
-		Duration            float64          `json:"duration"`
-		EnclosingBlockNames []string         `json:"enclosingBlockNames"`
-		EnclosingBlocks     []string         `json:"enclosingBlocks"`
-		ID                  string           `json:"id"`
-		Name                string           `json:"name"`
-		Stderr              string           `json:"stderr"`
-		Stdout              string           `json:"stdout"`
-		Timestamp           RFC1123Timestamp `json:"timestamp"`
+		Duration  int64       `json:"duration"`
+		ID        interface{} `json:"id"`
+		Name      string      `json:"name"`
+		Stderr    interface{} `json:"stderr"`
+		Stdout    interface{} `json:"stdout"`
+		Timestamp interface{} `json:"timestamp"`
 	} `json:"suites"`
 }
 
@@ -277,9 +263,10 @@ func (b *Build) GetDownstreamBuilds() ([]*Build, error) {
 			if err != nil {
 				return nil, err
 			}
-			upstreamBuild, _ := build.GetUpstreamBuild()
+			upstreamBuild, err := build.GetUpstreamBuild()
+			// older build may no longer exist, so simply ignore these
 			// cannot compare only id, it can be from different job
-			if b.GetUrl() == upstreamBuild.GetUrl() {
+			if err == nil && b.GetUrl() == upstreamBuild.GetUrl() {
 				result = append(result, build)
 				break
 			}
@@ -318,8 +305,9 @@ func (b *Build) GetUpstreamJob() (*Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	if len(causes) > 0 {
-		if job, ok := causes[0]["upstreamProject"]; ok {
+
+	for _, cause := range causes {
+		if job, ok := cause["upstreamProject"]; ok {
 			return b.Jenkins.GetJob(job.(string))
 		}
 	}
@@ -331,8 +319,8 @@ func (b *Build) GetUpstreamBuildNumber() (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	if len(causes) > 0 {
-		if build, ok := causes[0]["upstreamBuild"]; ok {
+	for _, cause := range causes {
+		if build, ok := cause["upstreamBuild"]; ok {
 			switch t := build.(type) {
 			default:
 				return t.(int64), nil
@@ -351,7 +339,7 @@ func (b *Build) GetUpstreamBuild() (*Build, error) {
 	}
 	if job != nil {
 		buildNumber, err := b.GetUpstreamBuildNumber()
-		if err == nil {
+		if err == nil && buildNumber != 0 {
 			return job.GetBuild(buildNumber)
 		}
 	}
