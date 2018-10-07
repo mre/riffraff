@@ -15,8 +15,7 @@ func FindMatchingJobs(jenkins *gojenkins.Jenkins, regex string) ([]gojenkins.Inn
 
 	var matchingJobs []gojenkins.InnerJob
 	for _, job := range jobs {
-		match, _ := regexp.MatchString(regex, job.Name)
-		if match {
+		if match, _ := regexp.MatchString(regex, job.Name); match {
 			matchingJobs = append(matchingJobs, job)
 		}
 	}
