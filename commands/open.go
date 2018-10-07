@@ -15,7 +15,10 @@ type Open struct {
 }
 
 func NewOpen(jenkins *gojenkins.Jenkins, regex string) *Open {
-	return &Open{}
+	return &Open{
+		jenkins,
+		regex,
+	}
 }
 
 func (o Open) Exec() error {
