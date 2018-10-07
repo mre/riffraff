@@ -15,3 +15,6 @@
 dist/
 
 riffraff
+
+# Coverage files
+cover*
