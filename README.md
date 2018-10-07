@@ -1,5 +1,7 @@
 # riffraff
 
+[![Travis (.org)](https://img.shields.io/travis/mre/riffraff/master.svg?style=flat-square)](https://travis-ci.org/mre/riffraff)
+
 ![usage](usage.gif)
 
 A commandline interface for Jenkins jobs, which queries the current status of all matching jobs in parallel.
