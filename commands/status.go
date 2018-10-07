@@ -24,17 +24,19 @@ func (s Status) Exec() error {
 		return err
 	}
 
-	var waitGroup sync.WaitGroup
-	waitGroup.Add(len(jobs))
-	defer waitGroup.Wait()
+	var wg sync.WaitGroup
 	for _, job := range jobs {
-		go s.print(&waitGroup, job)
+		wg.Add(1)
+		go func(job gojenkins.InnerJob) {
+			defer wg.Done()
+			s.print(job)
+		}(job)
 	}
+	wg.Wait()
 	return nil
 }
 
-func (s Status) print(waitGroup *sync.WaitGroup, job gojenkins.InnerJob) error {
-	defer waitGroup.Done()
+func (s Status) print(job gojenkins.InnerJob) error {
 	// Buffer full output to avoid race conditions between jobs
 	yellow := color.New(color.FgYellow).SprintFunc()
 	red := color.New(color.FgRed).SprintFunc()
@@ -57,7 +59,7 @@ func (s Status) print(waitGroup *sync.WaitGroup, job gojenkins.InnerJob) error {
 		}
 	}
 
-	var marker string
+	marker := yellow("?")
 	switch result {
 	case "RUNNING":
 		marker = green("↻")
@@ -65,8 +67,6 @@ func (s Status) print(waitGroup *sync.WaitGroup, job gojenkins.InnerJob) error {
 		marker = green("✓")
 	case "FAILURE":
 		marker = red("✗")
-	default:
-		marker = yellow("?")
 	}
 
 	fmt.Printf("%v %v (%v)\n", marker, job.Name, job.Url)
