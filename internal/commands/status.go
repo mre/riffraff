@@ -6,7 +6,7 @@ import (
 
 	"github.com/bndr/gojenkins"
 	"github.com/fatih/color"
-	"github.com/mre/riffraff/job"
+	"github.com/mre/riffraff/internal/job"
 )
 
 type Status struct {

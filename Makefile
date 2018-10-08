@@ -2,13 +2,18 @@
 
 # Build app
 build:
-	go build
+	@go build -v -o ./build/riffraff github.com/mre/riffraff/cmd/riffraff
 .PHONY: build
 
 # Clean up
 clean:
-	@rm -fR ./cover*
+	@rm -fR ./build/ ./cover*
 .PHONY: clean
+
+# Creates folders
+configure:
+	@mkdir -p ./build
+.PHONY: configure
 
 # Run tests and generates html coverage file
 cover: test
