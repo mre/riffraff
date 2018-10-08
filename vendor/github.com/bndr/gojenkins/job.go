@@ -37,6 +37,7 @@ type JobBuild struct {
 }
 
 type InnerJob struct {
+	Class string `json:"_class"`
 	Name  string `json:"name"`
 	Url   string `json:"url"`
 	Color string `json:"color"`
@@ -53,6 +54,7 @@ type ParameterDefinition struct {
 }
 
 type JobResponse struct {
+	Class              string `json:"_class"`
 	Actions            []generalObj
 	Buildable          bool `json:"buildable"`
 	Builds             []JobBuild
@@ -100,9 +102,10 @@ func (j *Job) parentBase() string {
 }
 
 type History struct {
-	BuildNumber    int
-	BuildStatus    string
-	BuildTimestamp int64
+	BuildDisplayName string
+	BuildNumber      int
+	BuildStatus      string
+	BuildTimestamp   int64
 }
 
 func (j *Job) GetName() string {
@@ -522,9 +525,11 @@ func (j *Job) Poll() (int, error) {
 }
 
 func (j *Job) History() ([]*History, error) {
-	resp, err := j.Jenkins.Requester.Get(j.Base+"/buildHistory/ajax", nil, nil)
+	var s string
+	_, err := j.Jenkins.Requester.Get(j.Base+"/buildHistory/ajax", &s, nil)
 	if err != nil {
 		return nil, err
 	}
-	return parseBuildHistory(resp.Body), nil
+
+	return parseBuildHistory(strings.NewReader(s)), nil
 }
