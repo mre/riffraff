@@ -8,6 +8,7 @@ install:
   - make depend
 
 script:
+  - go get
   - make test
   - make lint
 
