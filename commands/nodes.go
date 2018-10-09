@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/bndr/gojenkins"
+	"github.com/fatih/color"
 )
 
 type Nodes struct {
@@ -44,10 +45,14 @@ func printNodeStatus(waitGroup *sync.WaitGroup, node gojenkins.Node) error {
 	if err != nil {
 		return err
 	}
+
+	red := color.New(color.FgRed).SprintFunc()
+	green := color.New(color.FgGreen).SprintFunc()
+
 	if online {
-		fmt.Printf("%v: Online\n", node.GetName())
+		fmt.Printf("%v %v: Online\n", green("✓"), node.GetName())
 	} else {
-		fmt.Printf("%v: Offline\n", node.GetName())
+		fmt.Printf("%v %v: Offline\n", red("✗"), node.GetName())
 	}
 	return nil
 }
