@@ -17,6 +17,10 @@ cover: test
 
 # Download dependencies
 depend:
+	# Workaround for Go modules
+	# See https://github.com/alecthomas/gometalinter/issues/521#issuecomment-415976540
+	@go get -u gopkg.in/alecthomas/kingpin.v3-unstable@63abe20a23e29e80bbef8089bd3dee3ac25e5306
+
 	@go get -u gopkg.in/alecthomas/gometalinter.v2
 	@gometalinter.v2 --install
 .PHONY: depend
@@ -27,7 +31,7 @@ install:
 .PHONY: install
 
 # Run linters
-lint:
+lint: depend
 	gometalinter.v2 \
 		--disable-all \
 		--exclude=vendor \
