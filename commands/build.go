@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/bndr/gojenkins"
 	"github.com/mre/riffraff/job"
@@ -22,20 +23,25 @@ func (b Build) Exec() error {
 		return err
 	}
 
-	// TODO
-	// var waitGroup sync.WaitGroup
-	// waitGroup.Add(len(jobs))
-	// defer waitGroup.Wait()
+	var wg sync.WaitGroup
 	for _, job := range jobs {
-		id, err := b.jenkins.BuildJob(job.Name)
-		if err != nil {
-			return err
-		}
-		build, err := b.jenkins.GetBuild(job.Name, id)
-		if err != nil {
-			return err
-		}
-		fmt.Printf("Triggered build for %v [%v] %v\n", job.Name, id, build.GetUrl())
+		wg.Add(1)
+		go func(job gojenkins.InnerJob) {
+			defer wg.Done()
+
+			id, err := b.jenkins.BuildJob(job.Name)
+			if err != nil {
+				fmt.Printf("Triggering build for %v failed: %v\n", job.Name, err)
+				return
+			}
+			build, err := b.jenkins.GetBuild(job.Name, id)
+			if err != nil {
+				fmt.Printf("Getting build for %v [%v] failed: %v\n", job.Name, id, err)
+				return
+			}
+			fmt.Printf("Triggered build for %v [%v] %v\n", job.Name, id, build.GetUrl())
+		}(job)
 	}
+	wg.Wait()
 	return nil
 }
