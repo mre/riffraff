@@ -4,6 +4,11 @@ go:
   - "1.11"
   - master
 
+env:
+  - GO111MODULE=on
+
+install: true
+
 install:
   - make depend
 
