@@ -31,11 +31,13 @@ func (b Build) Exec() error {
 
 			id, err := b.jenkins.BuildJob(job.Name)
 			if err != nil {
-				return err
+				fmt.Printf("Triggering build for %v failed: %v\n", job.Name, err)
+				return
 			}
 			build, err := b.jenkins.GetBuild(job.Name, id)
 			if err != nil {
-				return err
+				fmt.Printf("Getting build for %v [%v] failed: %v\n", job.Name, id, err)
+				return
 			}
 			fmt.Printf("Triggered build for %v [%v] %v\n", job.Name, id, build.GetUrl())
 		}(job)
