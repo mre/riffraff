@@ -7,7 +7,14 @@
 
 ![usage](usage.gif)
 
-A commandline interface for Jenkins jobs, which queries the current status of all matching jobs in parallel.
+A commandline interface for Jenkins. 
+
+### Features
+
+* Queries the current status of jobs in parallel.
+* Can trigger Jenkins builds from the commandline.
+* Visualizes the status of jobs and nodes.
+* Can diff the output two runs.
 
 ###
 
