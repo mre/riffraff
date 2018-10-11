@@ -92,7 +92,7 @@ riffraff status -v "^application-.*-unittests$"
 ## Development
 
 * Install golang version 1.11 or later for [go modules](https://github.com/golang/go/wiki/Modules) support
-* Get the source using `go get -u github.com/mre/riffraff.git` or clone this repository to a directory under your `$GOPATH/src`
+* Clone this repository to a directory in your `$GOPATH/src` tree (recommended) or use`go get -u github.com/mre/riffraff.git` (uses https not SSH)
 * In the source folder run `go run main.go` to install modules and run riffraff
 
 ## OBTW
