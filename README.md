@@ -9,16 +9,14 @@
 
 A commandline interface for Jenkins.
 
-### Features
+## Features
 
 * Queries the current status of jobs in parallel.
 * Can trigger Jenkins builds from the commandline.
 * Visualizes the status of jobs and nodes.
 * Can diff the output two runs.
 
-###
-
-```
+```Shell
 usage: riffraff [<flags>] <command> [<args> ...]
 
 Flags:
@@ -52,19 +50,19 @@ Commands:
     Open a job in the browser
 ```
 
-### Installation
+## Installation
 
-```
+```Shell
 go get github.com/mre/riffraff
 ```
 
 ...or download a static binary from the [releases page](https://github.com/mre/riffraff/releases).
 
-### Getting started
+## Getting started
 
 You need to set the following environment variables:
 
-```
+```Shell
 export JENKINS_URL="http://example.com/"
 export JENKINS_USER="username"
 export JENKINS_PW="password"
@@ -72,33 +70,31 @@ export JENKINS_PW="password"
 
 You might want to put those into your `~/.bashrc`, `~/.zshrc` or equivalent.
 
+## Usage
 
-### Usage
-
-```
+```Shell
 riffraff status jenkins-job-name
 ```
 
 This will print the current status of all Jenkins jobs matching the given pattern (`jenkins-job-name` in this case).
 You can use any regular expression for that, e.g.:
 
-```
+```Shell
 riffraff status "^application-.*-unittests$"
 ```
 
 You can get the full output of each last job matching the pattern with
 
-```
+```Shell
 riffraff status -v "^application-.*-unittests$"
 ```
 
-### Development
+## Development
 
 * Install golang version 1.11 or later for [go modules](https://github.com/golang/go/wiki/Modules) support
 * Get the source using `go get -u github.com/mre/riffraff.git` or clone this repository to a directory under your `$GOPATH/src`
 * In the source folder run `go run main.go` to install modules and run riffraff
 
-
-### OBTW
+## OBTW
 
 The tool is named after the [butler from the Rocky Horror Picture Show](https://en.wikipedia.org/wiki/The_Rocky_Horror_Picture_Show:_Let%27s_Do_the_Time_Warp_Again), and not the rapper with the same name ;-).
