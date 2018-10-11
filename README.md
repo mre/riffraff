@@ -93,7 +93,8 @@ riffraff status -v "^application-.*-unittests$"
 
 * Install golang version 1.11 or later for [go modules](https://github.com/golang/go/wiki/Modules) support
 * Clone this repository to a directory in your `$GOPATH/src` tree (recommended) or use`go get -u github.com/mre/riffraff.git` (uses https not SSH)
-* In the source folder run `go run main.go` to install modules and run riffraff
+* In the source folder run `go run main.go` to install modules and run `riffraff`
+* If you don't have a Jenkins server you can run it by using its [`.war` file](https://jenkins.io/doc/pipeline/tour/getting-started/) (recommended) or installing its [`.deb` file](https://jenkins.io/doc/book/installing)
 
 ## OBTW
 
