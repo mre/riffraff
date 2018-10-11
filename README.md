@@ -7,7 +7,7 @@
 
 ![usage](usage.gif)
 
-A commandline interface for Jenkins. 
+A commandline interface for Jenkins.
 
 ### Features
 
@@ -86,11 +86,18 @@ You can use any regular expression for that, e.g.:
 riffraff status "^application-.*-unittests$"
 ```
 
-You can get the full output of each last job matching the pattern with 
+You can get the full output of each last job matching the pattern with
 
 ```
 riffraff status -v "^application-.*-unittests$"
 ```
+
+### Development
+
+* Install golang version 1.11 or later for [go modules](https://github.com/golang/go/wiki/Modules) support
+* Get the source using `go get -u github.com/mre/riffraff.git` or clone this repository to a directory under your `$GOPATH/src`
+* In the source folder run `go run main.go` to install modules and run riffraff
+
 
 ### OBTW
 
