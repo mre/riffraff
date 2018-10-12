@@ -6,11 +6,15 @@ require (
 	github.com/bndr/gojenkins v0.2.1-0.20180824070327-ddda3b6176a8
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.6.0
+	github.com/jtolds/gls v4.2.1+incompatible // indirect
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/skratchdot/open-golang v0.0.0-20160302144031-75fb7ed4208c
-	github.com/stretchr/testify v1.2.2 // indirect
+	github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d // indirect
+	github.com/smartystreets/goconvey v0.0.0-20180222194500-ef6db91d284a
+	github.com/stretchr/objx v0.1.1 // indirect
+	github.com/stretchr/testify v1.2.2
 	golang.org/x/net v0.0.0-20181005035420-146acd28ed58 // indirect
 	golang.org/x/sys v0.0.0-20180308025116-349b81fb5c64 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
