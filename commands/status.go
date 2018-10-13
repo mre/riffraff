@@ -48,7 +48,7 @@ func (s Status) print(job gojenkins.InnerJob) error {
 		result = fmt.Sprintf("UNKNOWN (%v)", err)
 	} else {
 		if lastBuild.IsRunning() {
-			result = "RUNNING"
+			result = StatusRunning
 		} else {
 			result = lastBuild.GetResult()
 		}

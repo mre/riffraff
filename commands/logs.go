@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/bndr/gojenkins"
-	"github.com/fatih/color"
 )
 
 type Logs struct {
@@ -19,10 +18,6 @@ func NewLogs(jenkins *gojenkins.Jenkins, jobName string, salt bool) *Logs {
 }
 
 func (l Logs) Exec() error {
-	yellow := color.New(color.FgYellow).SprintFunc()
-	red := color.New(color.FgRed).SprintFunc()
-	green := color.New(color.FgGreen).SprintFunc()
-
 	build, err := l.jenkins.GetJob(l.jobName)
 	if err != nil {
 		return err
@@ -36,15 +31,7 @@ func (l Logs) Exec() error {
 		result = lastBuild.GetResult()
 	}
 
-	var marker string
-	switch result {
-	case "SUCCESS":
-		marker = green("✓")
-	case "FAILURE":
-		marker = red("✗")
-	default:
-		marker = yellow("?")
-	}
+	marker := GetMarker(result)
 
 	fmt.Printf("%v %v (%v)\n", marker, l.jobName, lastBuild.GetUrl())
 
