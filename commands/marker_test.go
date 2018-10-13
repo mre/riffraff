@@ -29,7 +29,7 @@ func TestGetMarker(t *testing.T) {
 			c := color.New(tt.color).SprintFunc()
 
 			want := c(tt.marker)
-			got := getMarker(status)
+			got := GetMarker(status)
 			description := fmt.Sprintf("expected %s for %s", tt.marker, tt.status)
 
 			Convey(description, func() {
