@@ -7,7 +7,7 @@ import (
 	"github.com/bndr/gojenkins"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
-	"github.com/mre/riffraff/commands"
+	"github.com/mre/riffraff/internal/commands"
 )
 
 var (

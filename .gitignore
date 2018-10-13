@@ -14,8 +14,9 @@
 .glide/
 dist/
 
-riffraff
-
 # Coverage files
 cover*
 .vscode/
+
+# Build folder
+build/

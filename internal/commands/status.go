@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/bndr/gojenkins"
-	"github.com/mre/riffraff/job"
+	"github.com/mre/riffraff/internal/job"
 )
 
 type Status struct {

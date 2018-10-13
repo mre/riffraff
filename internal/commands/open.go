@@ -3,7 +3,7 @@ package commands
 import (
 	"log"
 
-	"github.com/mre/riffraff/job"
+	"github.com/mre/riffraff/internal/job"
 
 	"github.com/bndr/gojenkins"
 	"github.com/skratchdot/open-golang/open"
