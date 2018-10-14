@@ -1,4 +1,4 @@
-# riffraff
+![logo](logo_withname_400.png)
 
 [![Travis (.org)](https://img.shields.io/travis/mre/riffraff/master.svg?style=flat-square)](https://travis-ci.org/mre/riffraff)
 [![Codecov branch](https://img.shields.io/codecov/c/github/mre/riffraff/master.svg?style=flat-square)](https://codecov.io/gh/mre/riffraff)
@@ -8,8 +8,6 @@
 ![usage](usage.gif)
 
 A commandline interface for Jenkins.
-
-![logo](logo_withname_400.png)
 
 ## Features
 
