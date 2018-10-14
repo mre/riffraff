@@ -9,6 +9,8 @@
 
 A commandline interface for Jenkins.
 
+![logo](logo_withname_400.png)
+
 ## Features
 
 * Queries the current status of jobs in parallel.
@@ -99,3 +101,7 @@ riffraff status -v "^application-.*-unittests$"
 ## OBTW
 
 The tool is named after the [butler from the Rocky Horror Picture Show](https://en.wikipedia.org/wiki/The_Rocky_Horror_Picture_Show:_Let%27s_Do_the_Time_Warp_Again), and not the rapper with the same name ;-).
+
+## Credits
+
+Logo design: [Franziska Böhm noxmoon.de](http://noxmoon.de) ([CC-BY-SA](https://creativecommons.org/licenses/by-sa/4.0/))
