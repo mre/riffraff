@@ -1,4 +1,4 @@
-![logo](logo_withname_400.png)
+<img alt="The riffraff logo" src="logo_withname.svg" height="192px" />
 
 [![Travis (.org)](https://img.shields.io/travis/mre/riffraff/master.svg?style=flat-square)](https://travis-ci.org/mre/riffraff)
 [![Codecov branch](https://img.shields.io/codecov/c/github/mre/riffraff/master.svg?style=flat-square)](https://codecov.io/gh/mre/riffraff)
