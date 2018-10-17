@@ -11,8 +11,9 @@ import (
 )
 
 var (
-	statusCommand  = kingpin.Command("status", "Show the status of all matching jobs")
-	statusRegexArg = statusCommand.Arg("regex", "The regular expression to match for the job names").Default(".*").String()
+	statusCommand        = kingpin.Command("status", "Show the status of all matching jobs")
+	statusRegexArg       = statusCommand.Arg("regex", "The regular expression to match for the job names").Default(".*").String()
+	statusOnlyFailingArg = statusCommand.Flag("only-failing", "Show only failing jobs").Bool()
 
 	buildCommand  = kingpin.Command("build", "Trigger build for all matching jobs")
 	buildRegexArg = buildCommand.Arg("regex", "The regular expression to match for the job names").Default(".*").String()
@@ -65,7 +66,7 @@ func main() {
 	// e.g. https://github.com/mitchellh/cli
 	switch kingpin.Parse() {
 	case "status":
-		err = commands.NewStatus(jenkins, *statusRegexArg).Exec()
+		err = commands.NewStatus(jenkins, *statusRegexArg, *statusOnlyFailingArg).Exec()
 	case "diff":
 		err = commands.NewDiff(jenkins, *diffJobArg, *diffBuild1Arg, *diffBuild2Arg).Exec()
 	case "build":
