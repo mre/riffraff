@@ -9,6 +9,19 @@ import (
 	"github.com/mre/riffraff/internal/job"
 )
 
+var (
+	yellow = color.New(color.FgYellow).SprintFunc()
+	red    = color.New(color.FgRed).SprintFunc()
+	green  = color.New(color.FgGreen).SprintFunc()
+)
+
+var (
+	Unknown = yellow("?")
+	Running = green("↻")
+	Good    = green("✓")
+	Bad     = red("✗")
+)
+
 type Status struct {
 	jenkins *gojenkins.Jenkins
 	regex   string
@@ -25,12 +38,12 @@ func (s Status) Exec() error {
 	}
 
 	var wg sync.WaitGroup
-	for _, job := range jobs {
+	for i := range jobs {
 		wg.Add(1)
 		go func(job gojenkins.InnerJob) {
 			defer wg.Done()
 			s.print(job)
-		}(job)
+		}(jobs[i])
 	}
 	wg.Wait()
 	return nil
@@ -38,9 +51,6 @@ func (s Status) Exec() error {
 
 func (s Status) print(job gojenkins.InnerJob) error {
 	// Buffer full output to avoid race conditions between jobs
-	yellow := color.New(color.FgYellow).SprintFunc()
-	red := color.New(color.FgRed).SprintFunc()
-	green := color.New(color.FgGreen).SprintFunc()
 
 	build, err := s.jenkins.GetJob(job.Name)
 	if err != nil {
@@ -48,25 +58,16 @@ func (s Status) print(job gojenkins.InnerJob) error {
 	}
 
 	lastBuild, err := build.GetLastBuild()
-	var result string
-	if err != nil {
-		result = fmt.Sprintf("UNKNOWN (%v)", err)
-	} else {
+	marker := Unknown
+	if err == nil {
+		result := lastBuild.GetResult()
 		if lastBuild.IsRunning() {
-			result = "RUNNING"
-		} else {
-			result = lastBuild.GetResult()
+			marker = Running
+		} else if result == "SUCCESS" {
+			marker = Good
+		} else if result == "FAILURE" {
+			marker = Bad
 		}
-	}
-
-	marker := yellow("?")
-	switch result {
-	case "RUNNING":
-		marker = green("↻")
-	case "SUCCESS":
-		marker = green("✓")
-	case "FAILURE":
-		marker = red("✗")
 	}
 
 	fmt.Printf("%v %v (%v)\n", marker, job.Name, job.Url)

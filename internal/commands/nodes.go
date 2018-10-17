@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/bndr/gojenkins"
-	"github.com/fatih/color"
 )
 
 type Nodes struct {
@@ -25,16 +24,21 @@ func (n Nodes) Exec() error {
 	}
 
 	var waitGroup sync.WaitGroup
-	waitGroup.Add(len(nodes))
-	defer waitGroup.Wait()
-	for _, node := range nodes {
-		go printNodeStatus(&waitGroup, *node)
+
+	for i := range nodes {
+		waitGroup.Add(1)
+		go func(node *gojenkins.Node) {
+			defer waitGroup.Done()
+			print(node)
+		}(nodes[i])
 	}
+
+	waitGroup.Wait()
 	return nil
 }
 
-func printNodeStatus(waitGroup *sync.WaitGroup, node gojenkins.Node) error {
-	defer waitGroup.Done()
+func print(node *gojenkins.Node) error {
+
 	// Fetch Node Data
 	_, err := node.Poll()
 	if err != nil {
@@ -46,13 +50,17 @@ func printNodeStatus(waitGroup *sync.WaitGroup, node gojenkins.Node) error {
 		return err
 	}
 
-	red := color.New(color.FgRed).SprintFunc()
-	green := color.New(color.FgGreen).SprintFunc()
-
+	status := "Unknown"
+	marker := Unknown
 	if online {
-		fmt.Printf("%v %v: Online\n", green("✓"), node.GetName())
+		status = "Online"
+		marker = Good
 	} else {
-		fmt.Printf("%v %v: Offline\n", red("✗"), node.GetName())
+		status = "Offline"
+		marker = Bad
 	}
+
+	fmt.Printf("%s %s: %s\n", marker, node.GetName(), status)
+
 	return nil
 }
