@@ -7,16 +7,21 @@ import (
 	"github.com/bndr/gojenkins"
 )
 
+// Nodes is a type used to request the status of different nodes used by a Jenkins server.
 type Nodes struct {
 	jenkins *gojenkins.Jenkins
 }
 
+// NewNodes will construct a new Nodes instance with the provided Jenkins client that
+// has previously been configured with valid credentials.
 func NewNodes(jenkins *gojenkins.Jenkins) *Nodes {
 	return &Nodes{
 		jenkins,
 	}
 }
 
+// Exec will request all nodes connected to the configured Jenkins server and
+// prints the status of each node.
 func (n Nodes) Exec() error {
 	nodes, err := n.jenkins.GetAllNodes()
 	if err != nil {
