@@ -31,7 +31,15 @@ func (l Logs) Exec() error {
 		result = lastBuild.GetResult()
 	}
 
-	marker := GetMarker(result)
+	var marker string
+	switch result {
+	case "SUCCESS":
+		marker = Good
+	case "FAILURE":
+		marker = Bad
+	default:
+		marker = Unknown
+	}
 
 	fmt.Printf("%v %v (%v)\n", marker, l.jobName, lastBuild.GetUrl())
 

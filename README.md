@@ -1,4 +1,4 @@
-# riffraff
+<img alt="The riffraff logo" src="logo_withname.svg" height="192px" />
 
 [![Travis (.org)](https://img.shields.io/travis/mre/riffraff/master.svg?style=flat-square)](https://travis-ci.org/mre/riffraff)
 [![Codecov branch](https://img.shields.io/codecov/c/github/mre/riffraff/master.svg?style=flat-square)](https://codecov.io/gh/mre/riffraff)
@@ -99,3 +99,7 @@ riffraff status -v "^application-.*-unittests$"
 ## OBTW
 
 The tool is named after the [butler from the Rocky Horror Picture Show](https://en.wikipedia.org/wiki/The_Rocky_Horror_Picture_Show:_Let%27s_Do_the_Time_Warp_Again), and not the rapper with the same name ;-).
+
+## Credits
+
+Logo design: [Franziska Böhm noxmoon.de](http://noxmoon.de) ([CC-BY-SA](https://creativecommons.org/licenses/by-sa/4.0/))
