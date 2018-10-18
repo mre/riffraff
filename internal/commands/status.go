@@ -16,21 +16,30 @@ var (
 )
 
 var (
+	// Unknown represents the default or unknown status if an error occurs.
 	Unknown = yellow("?")
+	// Running is use to indicate jobs that are currently running.
 	Running = green("↻")
-	Good    = green("✓")
-	Bad     = red("✗")
+	// Good is a generic status that represents a healthy job/node.
+	Good = green("✓")
+	// Bad should be used to represent a problem with a job/node.
+	Bad = red("✗")
 )
 
+// Status is a type that is used to get the current build status of a Jenkins job.
+// Including the regex that is used to match the desired job names.
 type Status struct {
 	jenkins *gojenkins.Jenkins
 	regex   string
 }
 
+// NewStatus is a convenience method for constructing a new Status instance.
 func NewStatus(jenkins *gojenkins.Jenkins, regex string) *Status {
 	return &Status{jenkins, regex}
 }
 
+// Exec is responsible for finding all of the matching jobs on the Jenkins server
+// and prints the status of each job that matches the provided regular expression.
 func (s Status) Exec() error {
 	jobs, err := job.FindMatchingJobs(s.jenkins, s.regex)
 	if err != nil {
