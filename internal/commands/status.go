@@ -29,13 +29,13 @@ var (
 // Status is a type that is used to get the current build status of a Jenkins job.
 // Including the regex that is used to match the desired job names.
 type Status struct {
-	jenkins *gojenkins.Jenkins
-	regex   string
+	jenkins     *gojenkins.Jenkins
+	regex       string
+	onlyFailing bool
 }
 
-// NewStatus is a convenience method for constructing a new Status instance.
-func NewStatus(jenkins *gojenkins.Jenkins, regex string) *Status {
-	return &Status{jenkins, regex}
+func NewStatus(jenkins *gojenkins.Jenkins, regex string, onlyFailing bool) *Status {
+	return &Status{jenkins, regex, onlyFailing}
 }
 
 // Exec is responsible for finding all of the matching jobs on the Jenkins server
@@ -77,6 +77,10 @@ func (s Status) print(job gojenkins.InnerJob) error {
 		} else if result == "FAILURE" {
 			marker = Bad
 		}
+	}
+
+	if s.onlyFailing && marker != Bad {
+		return nil
 	}
 
 	fmt.Printf("%v %v (%v)\n", marker, job.Name, job.Url)
