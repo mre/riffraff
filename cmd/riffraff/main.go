@@ -177,9 +177,13 @@ var rootCmd = &cobra.Command{
 	Long:  "riffraff long description",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("Hello here")
-		// return nil
-		return create()
+		return nil
+		// return create()
 	},
+	// RunE: func(cmd *cobra.Command, args []string) error {
+	// 	fmt.Println("rootCmd run")
+	// 	return nil
+	// },
 }
 
 func create() error {
