@@ -1,17 +1,12 @@
 language: go
 
-env:
-- GO111MODULE=on
-
 go:
   - "1.11"
   - master
 
-install:
-  - make depend
-
 script:
-  - make test
+  - env GO111MODULE=on make test
+  - curl -L https://git.io/vp6lP | sh
   - make lint
 
 after_success:

@@ -35,7 +35,6 @@ require (
 	golang.org/x/net v0.0.0-20181005035420-146acd28ed58 // indirect
 	golang.org/x/sys v0.0.0-20180308025116-349b81fb5c64 // indirect
 	golang.org/x/tools v0.0.0-20181009195744-afb03721b588 // indirect
-	gopkg.in/alecthomas/gometalinter.v2 v2.0.11 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20171010053543-63abe20a23e2 // indirect
 	gopkg.in/yaml.v2 v2.2.1 // indirect

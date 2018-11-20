@@ -1,38 +1,27 @@
+# Needed SHELL since I'm using zsh
+SHELL := /bin/bash
+
 .DEFAULT_GOAL := build
 
-# Build app
-build:
-	go build
 .PHONY: build
+build: ## Build app
+	go build
 
-# Clean up
-clean:
-	@rm -fR ./cover*
 .PHONY: clean
+clean: ## Clean up
+	@rm -fR ./cover*
 
-# Run tests and generates html coverage file
-cover: test
-	@go tool cover -html=./coverage.text -o ./coverage.html
 .PHONY: cover
+cover: test ## Run tests and generates html coverage file
+	@go tool cover -html=./coverage.text -o ./coverage.html
 
-# Download dependencies
-depend:
-	# Workaround for Go modules
-	# See https://github.com/alecthomas/gometalinter/issues/521#issuecomment-415976540
-	@go get -u gopkg.in/alecthomas/kingpin.v3-unstable@63abe20a23e29e80bbef8089bd3dee3ac25e5306
-
-	@go get -u gopkg.in/alecthomas/gometalinter.v2
-	@gometalinter.v2 --install
-.PHONY: depend
-
-# Install app
-install:
-	go install
 .PHONY: install
+install: ## Install app
+	go install
 
-# Run linters
-lint: depend
-	gometalinter.v2 \
+.PHONY: lint
+lint: depend ## Run linters
+	gometalinter \
 		--disable-all \
 		--exclude=vendor \
 		--deadline=180s \
@@ -47,9 +36,10 @@ lint: depend
 		--enable=ineffassign \
 		--enable=misspell \
 		./..
-.PHONY: lint
 
-# Run tests
-test:
-	@go test -v -race -coverprofile=./coverage.text -covermode=atomic $(shell go list ./...)
 .PHONY: test
+test: ## Run tests
+	@go test -v -race -coverprofile=./coverage.text -covermode=atomic $(shell go list ./...)
+
+help: ## This help message
+	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
