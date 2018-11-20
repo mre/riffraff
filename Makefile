@@ -24,7 +24,7 @@ install: ## Install app
 	go install
 
 .PHONY: lint
-lint: depend ## Run linters
+lint: ## Run linters
 	gometalinter \
 		--disable-all \
 		--exclude=vendor \
