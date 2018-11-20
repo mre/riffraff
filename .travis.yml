@@ -8,7 +8,7 @@ install:
   - make depend
 
 script:
-  - make test
+  - env GO111MODULE=on make test
   - make lint
 
 after_success:
