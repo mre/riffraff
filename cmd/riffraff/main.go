@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/bndr/gojenkins"
 	"github.com/mre/riffraff/internal/commands"
@@ -41,13 +42,11 @@ var (
 )
 var jenkins *gojenkins.Jenkins
 var statusCmd = &cobra.Command{
-	Use:   "status",
+	Use:   "status <regex>",
 	Short: "Show the status of all matching jobs",
+	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		statusRegexArg, err := cmd.Flags().GetString("regex")
-		if err != nil {
-			return err
-		}
+		statusRegexArg := args[0]
 		statusOnlyFailingArg, err := cmd.Flags().GetBool("only-failing")
 		if err != nil {
 			return err
@@ -58,29 +57,22 @@ var statusCmd = &cobra.Command{
 	},
 }
 var buildCmd = &cobra.Command{
-	Use:   "build",
+	Use:   "build <regex>",
 	Short: "Trigger build for all matching jobs",
+	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		buildRegexArg, err := cmd.Flags().GetString("regex")
-		if err != nil {
-			return err
-		}
+		buildRegexArg := args[0]
 		fmt.Println(buildRegexArg)
 		// return commands.NewBuild(jenkins, buildRegexArg).Exec()
 		return nil
 	},
 }
 var logsCmd = &cobra.Command{
-	Use:   "log",
+	Use:   "log <job>",
 	Short: "Show the logs of a job",
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return cmd.MarkFlagRequired("job")
-	},
+	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		logsJobArg, err := cmd.Flags().GetString("job")
-		if err != nil {
-			return err
-		}
+		logsJobArg := args[0]
 		salt, err := cmd.Flags().GetBool("salt")
 		if err != nil {
 			return err
@@ -92,35 +84,16 @@ var logsCmd = &cobra.Command{
 	},
 }
 var diffCmd = &cobra.Command{
-	Use:   "diff",
+	Use:   "diff <job> <build1> <build2>",
 	Short: "Show the logs of a job",
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// check error
-		var err error
-		err = cmd.MarkFlagRequired("job")
-		if err != nil {
-			return err
-		}
-		err = cmd.MarkFlagRequired("build1")
-		if err != nil {
-			return err
-		}
-		err = cmd.MarkFlagRequired("build2")
-		if err != nil {
-			return err
-		}
-		return nil
-	},
+	Args:  cobra.ExactArgs(3),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		diffJobArg, err := cmd.Flags().GetString("job")
+		diffJobArg := args[0]
+		diffBuild1Arg, err := strconv.Atoi(args[1])
 		if err != nil {
 			return err
 		}
-		diffBuild1Arg, err := cmd.Flags().GetInt64("build1")
-		if err != nil {
-			return err
-		}
-		diffBuild2Arg, err := cmd.Flags().GetInt64("build2")
+		diffBuild2Arg, err := strconv.Atoi(args[2])
 		if err != nil {
 			return err
 		}
@@ -130,13 +103,11 @@ var diffCmd = &cobra.Command{
 	},
 }
 var queueCmd = &cobra.Command{
-	Use:   "queue",
+	Use:   "queue <regex>",
 	Short: "Show the queue of all matching jobs",
+	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		queueRegexArg, err := cmd.Flags().GetString("regex")
-		if err != nil {
-			return err
-		}
+		queueRegexArg := args[0]
 		verbose, err := cmd.Flags().GetBool("verbose")
 		if err != nil {
 			return err
@@ -158,13 +129,11 @@ var nodesCmd = &cobra.Command{
 	},
 }
 var openCmd = &cobra.Command{
-	Use:   "open",
+	Use:   "open <regex>",
 	Short: "Open a job in the browser",
+	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		openRegexArg, err := cmd.Flags().GetString("regex")
-		if err != nil {
-			return err
-		}
+		openRegexArg := args[0]
 		fmt.Println(openRegexArg)
 		// return commands.NewOpen(jenkins, openRegexArg).Exec()
 		return nil
@@ -174,7 +143,6 @@ var openCmd = &cobra.Command{
 var rootCmd = &cobra.Command{
 	Use:   "riffraff",
 	Short: "riffraff is a commandline interface for Jenkins",
-	Long:  "riffraff long description",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("Hello here")
 		// return nil
@@ -217,18 +185,7 @@ func main() {
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Verbose mode. Print full job output")
 	rootCmd.PersistentFlags().Bool("salt", false, "Show failed salt states")
 
-	statusCmd.Flags().String("regex", ".*", "The regular expression to match for the job names")
 	statusCmd.Flags().Bool("only-failing", false, "Show only failing jobs")
-	buildCmd.Flags().String("regex", ".*", "The regular expression to match for the job names")
-
-	// unsure about the initial values
-	logsCmd.Flags().String("job", "", "The name of the job to get logs for")
-	diffCmd.Flags().String("job", "", "The name of the job to get the diff for")
-	diffCmd.Flags().Int64("build1", 0, "First build")
-	diffCmd.Flags().Int64("build2", 0, "Second build")
-
-	queueCmd.Flags().String("regex", ".*", "The regular expression to match for the job names")
-	openCmd.Flags().String("regex", ".*", "The regular expression to match for the job names")
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
