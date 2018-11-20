@@ -28,10 +28,8 @@ require (
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/securego/gosec v0.0.0-20181005111228-e0a150bfa369 // indirect
 	github.com/skratchdot/open-golang v0.0.0-20160302144031-75fb7ed4208c
-<<<<<<< HEAD
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3 // indirect
-	github.com/stretchr/testify v1.2.2 // indirect
 	golang.org/x/net v0.0.0-20181005035420-146acd28ed58 // indirect
 	golang.org/x/sys v0.0.0-20180308025116-349b81fb5c64 // indirect
 	golang.org/x/tools v0.0.0-20181009195744-afb03721b588 // indirect
