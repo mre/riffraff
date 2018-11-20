@@ -14,7 +14,8 @@
 .glide/
 dist/
 
-riffraff
-
 # Coverage files
 cover*
+
+# Build folder
+build/

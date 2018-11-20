@@ -5,23 +5,24 @@ import (
 	"strings"
 
 	"github.com/bndr/gojenkins"
-	"github.com/fatih/color"
 )
 
+// Logs is a type that can be used to access a Jenkins job's logs.
 type Logs struct {
 	jenkins *gojenkins.Jenkins
 	jobName string
 	salt    bool
 }
 
+// NewLogs is a convenience method for initializing a new Logs instance.
 func NewLogs(jenkins *gojenkins.Jenkins, jobName string, salt bool) *Logs {
 	return &Logs{jenkins, jobName, salt}
 }
 
+// Exec will find a job matching the name in the Logs instance and print the console output.
+// A link to the console text will also be printed so the user can open the console output
+// in the Jenkins dashboard instead.
 func (l Logs) Exec() error {
-	yellow := color.New(color.FgYellow).SprintFunc()
-	red := color.New(color.FgRed).SprintFunc()
-	green := color.New(color.FgGreen).SprintFunc()
 
 	build, err := l.jenkins.GetJob(l.jobName)
 	if err != nil {
@@ -39,11 +40,11 @@ func (l Logs) Exec() error {
 	var marker string
 	switch result {
 	case "SUCCESS":
-		marker = green("✓")
+		marker = Good
 	case "FAILURE":
-		marker = red("✗")
+		marker = Bad
 	default:
-		marker = yellow("?")
+		marker = Unknown
 	}
 
 	fmt.Printf("%v %v (%v)\n", marker, l.jobName, lastBuild.GetUrl())

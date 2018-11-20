@@ -5,11 +5,15 @@ SHELL := /bin/bash
 
 .PHONY: build
 build: ## Build app
-	go build
+	@go build -v -o ./build/riffraff github.com/mre/riffraff/cmd/riffraff
 
 .PHONY: clean
 clean: ## Clean up
-	@rm -fR ./cover*
+	@rm -fR ./build/ ./cover*
+
+.PHONY: configure
+configure: ## Creates folders
+	@mkdir -p ./build
 
 .PHONY: cover
 cover: test ## Run tests and generates html coverage file

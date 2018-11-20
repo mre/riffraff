@@ -3,17 +3,19 @@ package commands
 import (
 	"log"
 
-	"github.com/mre/riffraff/job"
+	"github.com/mre/riffraff/internal/job"
 
 	"github.com/bndr/gojenkins"
 	"github.com/skratchdot/open-golang/open"
 )
 
+// Open is a type that can be used to open a job or set of jobs in a browser.
 type Open struct {
 	jenkins *gojenkins.Jenkins
 	regex   string
 }
 
+// NewOpen is a convenience method for initializing a new Open instance.
 func NewOpen(jenkins *gojenkins.Jenkins, regex string) *Open {
 	return &Open{
 		jenkins,
@@ -21,6 +23,8 @@ func NewOpen(jenkins *gojenkins.Jenkins, regex string) *Open {
 	}
 }
 
+// Exec will find a list of jobs with a name matching the specified regular expression and will
+// open the page for that job in the system's default web browser.
 func (o Open) Exec() error {
 	jobs, err := job.FindMatchingJobs(o.jenkins, o.regex)
 	if err != nil {
