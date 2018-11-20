@@ -44,8 +44,14 @@ var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Show the status of all matching jobs",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		statusRegexArg, _ := cmd.Flags().GetString("regex")
-		statusOnlyFailingArg, _ := cmd.Flags().GetBool("only-failing")
+		statusRegexArg, err := cmd.Flags().GetString("regex")
+		if err != nil {
+			return err
+		}
+		statusOnlyFailingArg, err := cmd.Flags().GetBool("only-failing")
+		if err != nil {
+			return err
+		}
 		fmt.Println(statusRegexArg, statusOnlyFailingArg)
 		// return commands.NewStatus(jenkins, statusRegexArg, statusOnlyFailingArg).Exec()
 		return nil
@@ -55,7 +61,10 @@ var buildCmd = &cobra.Command{
 	Use:   "build",
 	Short: "Trigger build for all matching jobs",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		buildRegexArg, _ := cmd.Flags().GetString("regex")
+		buildRegexArg, err := cmd.Flags().GetString("regex")
+		if err != nil {
+			return err
+		}
 		fmt.Println(buildRegexArg)
 		// return commands.NewBuild(jenkins, buildRegexArg).Exec()
 		return nil
@@ -68,8 +77,16 @@ var logsCmd = &cobra.Command{
 		return cmd.MarkFlagRequired("job")
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		logsJobArg, _ := cmd.Flags().GetString("job")
-		fmt.Println(logsJobArg)
+		logsJobArg, err := cmd.Flags().GetString("job")
+		if err != nil {
+			return err
+		}
+		salt, err := cmd.Flags().GetBool("salt")
+		if err != nil {
+			return err
+		}
+		fmt.Println(logsJobArg, salt)
+		// return commands.NewLogs(jenkins, logsJobArg, salt).Exec()
 		// return commands.NewStatus(jenkins, statusRegexArg, statusOnlyFailingArg).Exec()
 		return nil
 	},
@@ -79,17 +96,34 @@ var diffCmd = &cobra.Command{
 	Short: "Show the logs of a job",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// check error
-		cmd.MarkFlagRequired("build1")
-		cmd.MarkFlagRequired("build2")
-		cmd.MarkFlagRequired("job")
+		var err error
+		err = cmd.MarkFlagRequired("job")
+		if err != nil {
+			return err
+		}
+		err = cmd.MarkFlagRequired("build1")
+		if err != nil {
+			return err
+		}
+		err = cmd.MarkFlagRequired("build2")
+		if err != nil {
+			return err
+		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// 	err = commands.NewDiff(jenkins, *diffJobArg, *diffBuild1Arg, *diffBuild2Arg).Exec()
-		diffJobArg, _ := cmd.Flags().GetString("job")
-		diffBuild1Arg, _ := cmd.Flags().GetInt64("build1")
-		diffBuild2Arg, _ := cmd.Flags().GetInt64("build2")
-
+		diffJobArg, err := cmd.Flags().GetString("job")
+		if err != nil {
+			return err
+		}
+		diffBuild1Arg, err := cmd.Flags().GetInt64("build1")
+		if err != nil {
+			return err
+		}
+		diffBuild2Arg, err := cmd.Flags().GetInt64("build2")
+		if err != nil {
+			return err
+		}
 		fmt.Println(diffJobArg, diffBuild1Arg, diffBuild2Arg)
 		// return commands.NewDiff(jenkins, diffJobArg, diffBuild1Arg, diffBuild2Arg).Exec()
 		return nil
@@ -99,9 +133,20 @@ var queueCmd = &cobra.Command{
 	Use:   "queue",
 	Short: "Show the queue of all matching jobs",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		queueRegexArg, _ := cmd.Flags().GetString("regex")
-		fmt.Println(queueRegexArg)
-		// return commands.NewQueue(jenkins, queueRegexArg).Exec()
+		queueRegexArg, err := cmd.Flags().GetString("regex")
+		if err != nil {
+			return err
+		}
+		verbose, err := cmd.Flags().GetBool("verbose")
+		if err != nil {
+			return err
+		}
+		salt, err := cmd.Flags().GetBool("salt")
+		if err != nil {
+			return err
+		}
+		fmt.Println(queueRegexArg, verbose, salt)
+		// return commands.NewQueue(jenkins, queueRegexArg, verbose, salt).Exec()
 		return nil
 	},
 }
@@ -116,7 +161,10 @@ var openCmd = &cobra.Command{
 	Use:   "open",
 	Short: "Open a job in the browser",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		openRegexArg, _ := cmd.Flags().GetString("regex")
+		openRegexArg, err := cmd.Flags().GetString("regex")
+		if err != nil {
+			return err
+		}
 		fmt.Println(openRegexArg)
 		// return commands.NewOpen(jenkins, openRegexArg).Exec()
 		return nil
@@ -129,8 +177,8 @@ var rootCmd = &cobra.Command{
 	Long:  "riffraff long description",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("Hello here")
-		return nil
-		// return create()
+		// return nil
+		return create()
 	},
 }
 
