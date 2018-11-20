@@ -4,9 +4,12 @@ go:
   - "1.11"
   - master
 
+install:
+  - curl -L https://git.io/vp6lP | sh
+  - export PATH="$GOPATH/bin:$PWD/bin:$PATH"
+
 script:
   - env GO111MODULE=on make test
-  - curl -L https://git.io/vp6lP | sh
   - make lint
 
 after_success:
