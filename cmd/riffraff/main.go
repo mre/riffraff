@@ -17,8 +17,9 @@ var statusCmd = &cobra.Command{
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var statusRegexArg = ".*"
-		if len(args) > 0 {
+		if len(args) == 1 {
 			statusRegexArg = args[0]
+			cmd.SilenceUsage = true
 		}
 		statusOnlyFailingArg, err := cmd.Flags().GetBool("only-failing")
 		if err != nil {
@@ -33,8 +34,9 @@ var buildCmd = &cobra.Command{
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var buildRegexArg = ".*"
-		if len(args) > 0 {
+		if len(args) == 1 {
 			buildRegexArg = args[0]
+			cmd.SilenceUsage = true
 		}
 		return commands.NewBuild(jenkins, buildRegexArg).Exec()
 	},
@@ -49,6 +51,7 @@ var logsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		cmd.SilenceUsage = true
 		return commands.NewLogs(jenkins, logsJobArg, salt).Exec()
 	},
 }
@@ -66,6 +69,7 @@ var diffCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		cmd.SilenceUsage = true
 		return commands.NewDiff(jenkins, diffJobArg, diffBuild1Arg, diffBuild2Arg).Exec()
 	},
 }
@@ -75,8 +79,9 @@ var queueCmd = &cobra.Command{
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var queueRegexArg = ".*"
-		if len(args) > 0 {
+		if len(args) == 1 {
 			queueRegexArg = args[0]
+			cmd.SilenceUsage = true
 		}
 		verbose, err := cmd.Flags().GetBool("verbose")
 		if err != nil {
@@ -102,8 +107,9 @@ var openCmd = &cobra.Command{
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var openRegexArg = ".*"
-		if len(args) > 0 {
+		if len(args) == 1 {
 			openRegexArg = args[0]
+			cmd.SilenceUsage = true
 		}
 		return commands.NewOpen(jenkins, openRegexArg).Exec()
 	},
@@ -146,13 +152,12 @@ func authenticate() {
 		log.Fatal("Please set JENKINS_USER")
 	}
 
-	jenkins := gojenkins.CreateJenkins(nil, jenkinsURL, jenkinsUser, jenkinsPw)
+	jenkins = gojenkins.CreateJenkins(nil, jenkinsURL, jenkinsUser, jenkinsPw)
 	if jenkins == nil {
 		log.Fatal("Cannot instantiate Jenkins connection: null pointer return")
 	}
 	jenkins, err := jenkins.Init()
-
 	if err != nil {
-		log.Printf("Cannot authenticate: %v", err)
+		log.Fatalf("Cannot authenticate to %s: %v", jenkins.Server, err)
 	}
 }
