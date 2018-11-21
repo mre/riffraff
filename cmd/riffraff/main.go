@@ -12,7 +12,7 @@ import (
 
 var jenkins *gojenkins.Jenkins
 var statusCmd = &cobra.Command{
-	Use:   "status [REGEX]",
+	Use:   "status [<regex>]",
 	Short: "Show the status of all matching jobs",
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
