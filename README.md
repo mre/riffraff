@@ -17,37 +17,27 @@ A commandline interface for Jenkins.
 * Can diff the output two runs.
 
 ```Shell
-usage: riffraff [<flags>] <command> [<args> ...]
+riffraff is a commandline interface for Jenkins
+
+Usage:
+  riffraff [command]
+
+Available Commands:
+  build       Trigger build for all matching jobs
+  diff        Print a diff between two builds of a job
+  help        Help about any command
+  log         Show the logs of a job
+  nodes       Show the status of all Jenkins nodes
+  open        Open a job in the browser
+  queue       Show the queue of all matching jobs
+  status      Show the status of all matching jobs
 
 Flags:
-      --help     Show context-sensitive help (also try --help-long and --help-man).
-  -v, --verbose  Verbose mode. Print full job output
-      --salt     Show failed salt states
+  -h, --help      help for riffraff
+      --salt      Show failed salt states
+  -v, --verbose   Verbose mode. Print full job output
 
-Commands:
-  help [<command>...]
-    Show help.
-
-  status [<regex>]
-    Show the status of all matching jobs
-
-  build [<regex>]
-    Trigger build for all matching jobs
-
-  logs <job>
-    Show the logs of a job
-
-  diff <job> <build1> <build2>
-    Print a diff between two builds of a job
-
-  queue [<regex>]
-    Show the queue of all matching jobs
-
-  nodes
-    Show the status of all Jenkins nodes
-
-  open [<regex>]
-    Open a job in the browser
+Use "riffraff [command] --help" for more information about a command.
 ```
 
 ## Installation

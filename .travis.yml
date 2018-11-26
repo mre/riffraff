@@ -5,10 +5,12 @@ go:
   - master
 
 install:
-  - make depend
+  # Install gometalinter from binary distribution
+  - curl -L https://git.io/vp6lP | sh && mv ./bin/* $GOPATH/bin/ && rm -r ./bin
+  - export PATH="$GOPATH/bin:$PATH"
 
 script:
-  - make test
+  - env GO111MODULE=on make test
   - make lint
 
 after_success:

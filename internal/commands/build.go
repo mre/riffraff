@@ -8,15 +8,20 @@ import (
 	"github.com/mre/riffraff/internal/job"
 )
 
+// Build can be used to kick of new builds of jobs with a name matching
+// the provided regular expression.
 type Build struct {
 	jenkins *gojenkins.Jenkins
 	regex   string
 }
 
+// NewBuild is a convenience method for initializing a new Build instance.
 func NewBuild(jenkins *gojenkins.Jenkins, regex string) *Build {
 	return &Build{jenkins, regex}
 }
 
+// Exec will send a request to the Jenkins server to start new builds of all jobs
+// with names that match the configured regular expression.
 func (b Build) Exec() error {
 	jobs, err := job.FindMatchingJobs(b.jenkins, b.regex)
 	if err != nil {
