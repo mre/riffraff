@@ -59,8 +59,6 @@ func (s Status) Exec() error {
 }
 
 func (s Status) print(job gojenkins.InnerJob) error {
-	// Buffer full output to avoid race conditions between jobs
-
 	build, err := s.jenkins.GetJob(job.Name)
 	if err != nil {
 		return err

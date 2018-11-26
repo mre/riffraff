@@ -23,7 +23,6 @@ func NewLogs(jenkins *gojenkins.Jenkins, jobName string, salt bool) *Logs {
 // A link to the console text will also be printed so the user can open the console output
 // in the Jenkins dashboard instead.
 func (l Logs) Exec() error {
-
 	build, err := l.jenkins.GetJob(l.jobName)
 	if err != nil {
 		return err

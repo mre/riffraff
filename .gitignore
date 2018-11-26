@@ -16,6 +16,7 @@ dist/
 
 # Coverage files
 cover*
+.vscode/
 
 # Build folder
 build/
