@@ -21,7 +21,7 @@ cover: test ## Run tests and generates html coverage file
 
 .PHONY: install
 install: ## Install app
-	go install
+	go install github.com/mre/riffraff/cmd/riffraff
 
 .PHONY: lint
 lint: ## Run linters
