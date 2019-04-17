@@ -1,11 +1,11 @@
-<img alt="The riffraff logo" src="logo_withname.svg" height="192px" />
+<img alt="The riffraff logo" src="assets/logo_withname.svg" height="192px" />
 
 [![Travis (.org)](https://img.shields.io/travis/mre/riffraff/master.svg?style=flat-square)](https://travis-ci.org/mre/riffraff)
 [![Codecov branch](https://img.shields.io/codecov/c/github/mre/riffraff/master.svg?style=flat-square)](https://codecov.io/gh/mre/riffraff)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=flat-square)](https://godoc.org/github.com/mre/riffraff)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mre/riffraff?style=flat-square)](https://goreportcard.com/report/github.com/mre/riffraff)
 
-![usage](usage.gif)
+![usage](assets/usage.gif)
 
 A commandline interface for Jenkins.
 
