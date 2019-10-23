@@ -46,7 +46,7 @@ var (
 )
 
 // Init Method. Should be called after creating a Jenkins Instance.
-// e.g jenkins := CreateJenkins("url").Init()
+// e.g jenkins,err := CreateJenkins("url").Init()
 // HTTP Client is set here, Connection to jenkins is tested here.
 func (j *Jenkins) Init() (*Jenkins, error) {
 	j.initLoggers()
@@ -556,7 +556,7 @@ func (j *Jenkins) Poll() (int, error) {
 }
 
 // Creates a new Jenkins Instance
-// Optional parameters are: client, username, password
+// Optional parameters are: client, username, password or token
 // After creating an instance call init method.
 func CreateJenkins(client *http.Client, base string, auth ...interface{}) *Jenkins {
 	j := &Jenkins{}
