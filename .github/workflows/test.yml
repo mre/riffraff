@@ -1,0 +1,30 @@
+name: Running test
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ '1.13' ]
+    name: Testing with go ${{ matrix.go }}
+    steps:
+      - name: Retrieving code
+        uses: actions/checkout@v1
+
+      - name: setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Install gometalinter
+        run: |
+          curl -L https://git.io/vp6lP | sh
+
+      - name: Running test
+        env:
+          GO111MODULE: on
+        run: make test
+
+      - name: Running lint            
+        run: PATH="$PATH:$GITHUB_WORKSPACE/bin" make lint
