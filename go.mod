@@ -2,7 +2,7 @@ module github.com/mre/riffraff
 
 require (
 	github.com/bndr/gojenkins v0.2.1-0.20181125150310-de43c03cf849
-	github.com/fatih/color v1.8.0
+	github.com/fatih/color v1.9.0
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/mattn/go-colorable v0.1.1 // indirect
 	github.com/mattn/go-isatty v0.0.7 // indirect
