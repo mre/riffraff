@@ -10,6 +10,7 @@ require (
 	github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3 // indirect
+	github.com/stretchr/testify v1.5.1 // indirect
 	golang.org/x/net v0.0.0-20190415214537-1da14a5a36f2 // indirect
 )
 
