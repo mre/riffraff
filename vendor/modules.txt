@@ -1,23 +1,23 @@
 # github.com/bndr/gojenkins v0.2.1-0.20181125150310-de43c03cf849
 github.com/bndr/gojenkins
-# github.com/fatih/color v1.7.0
+# github.com/fatih/color v1.11.0
 github.com/fatih/color
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
-# github.com/mattn/go-colorable v0.1.1
+# github.com/mattn/go-colorable v0.1.8
 github.com/mattn/go-colorable
-# github.com/mattn/go-isatty v0.0.7
+# github.com/mattn/go-isatty v0.0.12
 github.com/mattn/go-isatty
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
 # github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e
 github.com/skratchdot/open-golang/open
-# github.com/spf13/cobra v0.0.3
+# github.com/spf13/cobra v0.0.7
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.3
 github.com/spf13/pflag
-# golang.org/x/net v0.0.0-20190415214537-1da14a5a36f2
+# golang.org/x/net v0.0.0-20190522155817-f3200d17e092
 golang.org/x/net/html
 golang.org/x/net/html/atom
-# golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223
+# golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae
 golang.org/x/sys/unix
