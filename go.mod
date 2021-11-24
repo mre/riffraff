@@ -5,8 +5,7 @@ require (
 	github.com/fatih/color v1.13.0
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e
-	github.com/spf13/cobra v0.0.7
-	github.com/stretchr/testify v1.5.1 // indirect
+	github.com/spf13/cobra v1.2.1
 )
 
 go 1.13
