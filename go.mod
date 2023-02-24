@@ -1,7 +1,7 @@
 module github.com/mre/riffraff
 
 require (
-	github.com/bndr/gojenkins v0.2.1-0.20181125150310-de43c03cf849
+	github.com/bndr/gojenkins v1.1.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0
 	github.com/kr/pretty v0.2.0 // indirect
